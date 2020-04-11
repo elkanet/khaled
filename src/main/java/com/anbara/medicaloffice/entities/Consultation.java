@@ -31,6 +31,7 @@ public class Consultation implements Serializable {
     @OneToMany(mappedBy = "consultation")
     private Collection<MedicalExam> medicalExams;
 
-    @OneToOne // ???
+    @OneToOne
+    @JoinColumn(name="id", nullable=true)
     private Certificate certificate;
 }

@@ -35,7 +35,7 @@ public class Patient implements Serializable {
     //@OneToMany(mappedBy = "patient")
 //    @OneToMany()
 //    private Collection<AppointmentPatient> appointmentPatients;
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER) // recomended value LAZY
     Collection<Date> rdvPatients;
 
     @OneToMany(mappedBy = "patient")
@@ -43,10 +43,10 @@ public class Patient implements Serializable {
 
 
 
-    public Patient(String firstName, String lastName, Collection<AppointmentPatient> appointmentPatients, Collection<Consultation> consultations) {
+    public Patient(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.consultations = consultations;
+
     }
 }
 

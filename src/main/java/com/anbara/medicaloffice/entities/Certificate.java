@@ -10,7 +10,7 @@ import java.util.Date;
 
 @Entity
 @NoArgsConstructor
-@AllArgsConstructor
+//@AllArgsConstructor
 @Data
 public class Certificate implements Serializable {
     @Id
@@ -30,6 +30,12 @@ public class Certificate implements Serializable {
 
     private CertificateType certificateType;
 
+    public Certificate(String firstName, String lastName, String commentCertificate) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.commentCertificate = commentCertificate;
+
+    }
 }
 
 enum CertificateType {

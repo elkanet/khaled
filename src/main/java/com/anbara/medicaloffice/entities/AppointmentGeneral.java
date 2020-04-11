@@ -8,11 +8,11 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
-//@Entity
+@Entity
 @NoArgsConstructor
 @Data
 public class AppointmentGeneral implements Serializable {
-   // @Id
+   @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long numberAppointment;
     @Temporal(TemporalType.DATE)

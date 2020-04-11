@@ -8,91 +8,140 @@ import org.springframework.stereotype.Service;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.stream.Stream;
+import java.util.*;
 
 @Service
 public class MedOfficeInitServiceImpl implements IMedOfficeInitService {
 
     private final PatientRepository patientRepository;
-    private final AppointmentRepository appointmentRepository;
+    private final AppointmentGenRepository appointmentGenRepository;
     private final ConsultationRepository consultationRepository;
     private final MedicalExamRepository medicalExamRepository;
     private final CertificateRepository certificateRepository;
-    private final MedicamentRepository  medicamentRepository;
     private final PrescriptionRepository prescriptionRepository;
 
-    private  DateFormat format1,format2;
+    private DateFormat format1, format2;
 
-    public MedOfficeInitServiceImpl(PatientRepository patientRepository, AppointmentRepository appointmentRepository, ConsultationRepository consultationRepository, MedicalExamRepository medicalExamRepository, CertificateRepository certificateRepository, MedicamentRepository medicamentRepository, PrescriptionRepository prescriptionRepository) {
+    @Autowired
+    public MedOfficeInitServiceImpl(PatientRepository patientRepository, AppointmentGenRepository appointmentGenRepository, ConsultationRepository consultationRepository, MedicalExamRepository medicalExamRepository, CertificateRepository certificateRepository, PrescriptionRepository prescriptionRepository) {
         this.patientRepository = patientRepository;
-        this.appointmentRepository = appointmentRepository;
+        this.appointmentGenRepository = appointmentGenRepository;
         this.consultationRepository = consultationRepository;
         this.medicalExamRepository = medicalExamRepository;
         this.certificateRepository = certificateRepository;
-        this.medicamentRepository = medicamentRepository;
+
         this.prescriptionRepository = prescriptionRepository;
 
-        format1=new SimpleDateFormat("dd-MM-yyyy");
-        format2=new SimpleDateFormat("hh:mm");
+        format1 = new SimpleDateFormat("dd-MM-yyyy");
+        format2 = new SimpleDateFormat("hh:mm");
     }
 
-    @Autowired
 
     @Override
     public void initPatients() {
 
 
-     Patient p1=new Patient() ;
-     p1.setFirstName("amine");
-     p1.setLastName("manih");
+        Patient p1 = new Patient();
+        p1.setFirstName("amine");
+        p1.setLastName("manih");
+        patientRepository.save(p1);
 
-        try {
-            AppointmentPatient a1=new AppointmentPatient(format1.parse("23-05-2020"),format2.parse("10:34"));
-        } catch (ParseException e) {
-            e.printStackTrace();
+        Optional<Patient> optional = patientRepository.findById(1L);
+        if (optional.isPresent()) {
+            Patient pp = optional.get();
+            Collection<Date> dates = pp.getRdvPatients();
+            dates.add(new Date());
+            pp.setRdvPatients(dates);
+            patientRepository.save(pp);
+
         }
-// Stream.of();
+        optional = patientRepository.findById(1L);
+        if (optional.isPresent()) {
+            Patient ppp = optional.get();
+            Collection<Date> dates = ppp.getRdvPatients();
+            dates.add(new Date());
+            ppp.setRdvPatients(dates);
+            patientRepository.save(ppp);
+
+        }
     }
 
     @Override
-    public void initAppointments() {
+    public void initAppointmentsGeneral() {
 
-//        try {
-//            AppointmentPatient a1=new AppointmentPatient("amine mahdaoui"
-//                    ,"002126334444",format1.parse("23-05-2020"),format2.parse("10:34"));
-//            AppointmentPatient a2=new AppointmentPatient("ahmed madani"
-//                    ,"002126777334",format1.parse("21-06-2010"),format2.parse("14:34"));
-//            appointmentRepository.save(a1);
-//            appointmentRepository.save(a2);
-//
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            AppointmentGeneral a1 = new AppointmentGeneral("mostafa akim"
+                    , "002126334444", format1.parse("23-05-2020"), format2.parse("10:34"));
+            AppointmentGeneral a2 = new AppointmentGeneral("ahmed najar"
+                    , "002126777334", format1.parse("21-06-2010"), format2.parse("14:34"));
+            appointmentGenRepository.save(a1);
+            appointmentGenRepository.save(a2);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void initConsultations() {
+        // get Patient then add consultaion
+        Optional<Patient> optional = patientRepository.findById(1L);
+        if (optional.isPresent()) {
+            Consultation consultation = new Consultation();
+            consultation.setDateConsultation(new Date());
+            consultation.setPatient(optional.get());
+            consultation.setReason_consultation("fievre");
+            consultationRepository.save(consultation);
+
+        }
 
     }
 
-    @Override
-    public void initMedicaments() {
-
-    }
 
     @Override
     public void initPrescriptions() {
+// get consulation then add
+  /*      Optional<Consultation> optional = consultationRepository.findById(1L);
+        if (optional.isPresent()) {
+            Consultation consultation = optional.get();
 
+            Prescription prescription = new Prescription(new HashMap<String, String>() {
+                {
+                    put("medicament AA", "form1");
+                    put("medicament BB", "form2");
+                }
+            });
+
+//            prescription.setConsultation(consultation);
+            prescriptionRepository.save(prescription);
+
+            consultation.setPrescription(prescription);
+
+            consultationRepository.save(consultation);
+
+        }
+
+   */
     }
 
     @Override
     public void initCertificates() {
+// get consulation then add
+        Optional<Consultation> optional = consultationRepository.findById(1L);
+        if (optional.isPresent()) {
+            Consultation consultation = optional.get();
+//firstName,  lastName,  commentCertificate, CertificateType certificateType) {
+            Certificate certificate = new Certificate(consultation.getPatient().getFirstName()
+                    , consultation.getPatient().getLastName()
+                    , "comment Certificate....");
+            certificateRepository.save(certificate);
 
+        }
     }
 
     @Override
     public void initMedicalExams() {
+// get consulation then add
 
     }
 }
